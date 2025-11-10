@@ -14,8 +14,10 @@ public class Main {
             }else if(command.trim().substring(0,4).equals("echo")){
                 String output = command.substring(4).trim();
                 System.out.print(output);
+            }else{
+                System.out.println(command+": command not found");
             }
-            System.out.println(command+": command not found");
+           
         }
         
     }
