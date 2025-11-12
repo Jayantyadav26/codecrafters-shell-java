@@ -10,6 +10,7 @@ public class Main {
             System.out.print("$ ");
             String command = scanner.nextLine();
             if(command.trim().substring(0, 4).equals("exit")){
+                //comment
                 break;
             }else if(command.trim().substring(0,4).equals("echo")){
                 String output = command.substring(4).trim();
