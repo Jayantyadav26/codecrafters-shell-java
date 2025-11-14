@@ -7,8 +7,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
 
-        boolean b = true;
-        while (b) {
+        while (true) {
             System.out.print("$ ");
             String input = scanner.nextLine();
 
@@ -19,7 +18,7 @@ public class Main {
             String result = String.join(" ", rest);
 
             if (Objects.equals(command, "exit")) {
-                b = false;
+                break;
             } else if (Objects.equals(command, "echo")) {
                 System.out.println(result);
             } else if (command.equals("type")) {
