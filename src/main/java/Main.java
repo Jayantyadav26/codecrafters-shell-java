@@ -24,6 +24,7 @@ public class Main {
             } else if (command.equals("type")) {
                 System.out.println(type(result));
             } else {
+                boolean executed = false;
                 String pathEnv = System.getenv("PATH");
                 if(pathEnv == null || pathEnv.isEmpty()) {
                     System.out.println(input + ": command not found");
@@ -38,11 +39,11 @@ public class Main {
                         if(file.exists() && file.canExecute()){
                             Process process = Runtime.getRuntime().exec(words);
                             process.getInputStream().transferTo(System.out);
+                            executed = true;
                         }
                     }
-                    continue;
                 }
-                System.out.println(input + ": command not found");   
+                if(!executed) System.out.println(input + ": command not found");   
             }
         }
 
