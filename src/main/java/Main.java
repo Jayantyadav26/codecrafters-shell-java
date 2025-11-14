@@ -24,7 +24,25 @@ public class Main {
             } else if (command.equals("type")) {
                 System.out.println(type(result));
             } else {
-                System.out.println(input + ": command not found");
+                String pathEnv = System.getenv("PATH");
+                if(pathEnv == null || pathEnv.isEmpty()) {
+                    System.out.println(input + ": command not found");
+                    continue;
+                }else if(pathEnv != null && !pathEnv.isEmpty()){
+                    String[] pathDirs = pathEnv.split(":");
+
+                    for(String dir : pathDirs){
+                        if (dir == null || dir.isEmpty())
+                            continue;
+                        File file = new File(dir.trim(), command);
+                        if(file.exists() && file.canExecute()){
+                            Process process = Runtime.getRuntime().exec(words);
+                            process.getInputStream().transferTo(System.out);
+                        }
+                    }
+                    continue;
+                }
+                System.out.println(input + ": command not found");   
             }
         }
 
