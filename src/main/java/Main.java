@@ -10,61 +10,39 @@ public class Main {
         while (true) {
             System.out.print("$ ");
             String input = scanner.nextLine();
-            if (input == null) break;
-            input = input.trim();
-            if (input.isEmpty()) continue;
 
-            String[] words = input.split("\\s+");
+            String[] words = input.split(" ");
             String command = words[0];
             String[] rest = Arrays.copyOfRange(words, 1, words.length);
+
             String result = String.join(" ", rest);
 
-            // BUILTINS
             if (Objects.equals(command, "exit")) {
                 break;
             } else if (Objects.equals(command, "echo")) {
                 System.out.println(result);
-                continue;
-            } else if (Objects.equals(command, "type")) {
+            } else if (command.equals("type")) {
                 System.out.println(type(result));
-                continue;
-            } 
-            // EXTERNAL COMMANDS (PATH lookup)
-            else {
+            } else {
                 String pathEnv = System.getenv("PATH");
-                if (pathEnv == null || pathEnv.isEmpty()) {
+                if(pathEnv == null || pathEnv.isEmpty()) {
                     System.out.println(input + ": command not found");
                     continue;
-                }
+                }else if(pathEnv != null && !pathEnv.isEmpty()){
+                    String[] pathDirs = pathEnv.split(":");
 
-                String[] pathDirs = pathEnv.split(":");
-                boolean found = false;
-
-                for (String dir : pathDirs) {
-                    if (dir == null || dir.isEmpty()) continue;
-
-                    File file = new File(dir.trim(), command);
-                    if (file.exists() && file.canExecute()) {
-                        found = true;
-
-                        // Build command array where first element is absolute path
-                        String[] cmdArray = new String[words.length];
-                        cmdArray[0] = file.getAbsolutePath();
-                        if (words.length > 1) {
-                            System.arraycopy(words, 1, cmdArray, 1, words.length - 1);
+                    for(String dir : pathDirs){
+                        if (dir == null || dir.isEmpty())
+                            continue;
+                        File file = new File(dir.trim(), command);
+                        if(file.exists() && file.canExecute()){
+                            Process process = Runtime.getRuntime().exec(words);
+                            process.getInputStream().transferTo(System.out);
                         }
-
-                        Process process = Runtime.getRuntime().exec(cmdArray);
-                        process.getInputStream().transferTo(System.out);
-                        process.getErrorStream().transferTo(System.err);
-                        process.waitFor();
-                        break;
                     }
+                    continue;
                 }
-
-                if (!found) {
-                    System.out.println(input + ": command not found");
-                }
+                System.out.println(input + ": command not found");   
             }
         }
 
@@ -72,8 +50,6 @@ public class Main {
     }
 
     public static String type(String command) {
-        if (command == null || command.isEmpty()) return ": not found";
-
         String[] builtins = { "exit", "echo", "type" };
         for (String b : builtins) {
             if (Objects.equals(b, command)) {
@@ -87,8 +63,10 @@ public class Main {
         }
 
         String[] pathDirs = pathEnv.split(":");
+
         for (String dir : pathDirs) {
-            if (dir == null || dir.isEmpty()) continue;
+            if (dir == null || dir.isEmpty())
+                continue;
             File file = new File(dir.trim(), command);
             if (file.exists() && file.canExecute()) {
                 return command + " is " + file.getAbsolutePath();
@@ -97,4 +75,5 @@ public class Main {
 
         return command + ": not found";
     }
+
 }
