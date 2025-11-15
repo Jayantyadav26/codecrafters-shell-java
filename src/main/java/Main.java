@@ -43,6 +43,20 @@ public class Main {
                     }else{
                         System.out.println("cd: " + rest[0] + ": No such file or directory");
                     }
+                }else if(rest[0].substring(0, 2).equals("..") && rest[0].substring(0,3).equals("../")){
+                    //parent directory
+                    File currentDirectory = currDirectory();
+                    File parentDirectory = currentDirectory.getParentFile();
+                    if(parentDirectory != null){
+                        File newDirectory = new File(parentDirectory, rest[0].substring(3));
+                        if(newDirectory.exists() && newDirectory.isDirectory()){
+                            System.setProperty("user.dir", newDirectory.getAbsolutePath());
+                        }else{
+                            System.out.println("cd: " + rest[0] + ": No such file or directory");
+                        }
+                    }else{
+                        System.out.println("cd: " + rest[0] + ": No such file or directory");
+                    }
                 }
             }
             else {
