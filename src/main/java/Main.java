@@ -24,11 +24,20 @@ public class Main {
             } else if (command.equals("type")) {
                 System.out.println(type(result));
             } else if(command.equals("pwd")){
-                System.out.println(System.getProperty("user.dir"));
+                System.out.println(currDirectory());
             } else if(command.equals("cd")){
                 if(rest[0].charAt(0) == '/'){
                     //root directory or absolute path....
                     File newDirectory = new File(rest[0]);
+                    if(newDirectory.exists() && newDirectory.isDirectory()){
+                        System.setProperty("user.dir", newDirectory.getAbsolutePath());
+                    }else{
+                        System.out.println("cd: " + rest[0] + ": No such file or directory");
+                    }
+                }else if(rest[0].substring(0, 2).equals("./")){
+                    //in current directory
+                    File currentDirectory = currDirectory();
+                    File newDirectory = new File(currentDirectory, rest[0].substring(2));
                     if(newDirectory.exists() && newDirectory.isDirectory()){
                         System.setProperty("user.dir", newDirectory.getAbsolutePath());
                     }else{
@@ -88,6 +97,10 @@ public class Main {
         }
 
         return command + ": not found";
+    }
+
+    public static File currDirectory(){
+        return new File(System.getProperty("user.dir"));
     }
 
 }
