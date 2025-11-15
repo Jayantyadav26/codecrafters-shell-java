@@ -54,7 +54,7 @@ public class Main {
     }
 
     public static String type(String command) {
-        String[] builtins = { "exit", "echo", "type" };
+        String[] builtins = { "exit", "echo", "type","pwd" };
         for (String b : builtins) {
             if (Objects.equals(b, command)) {
                 return command + " is a shell builtin";
