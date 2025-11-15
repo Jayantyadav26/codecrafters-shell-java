@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Main {
     static final String INITIAL_DIR = System.getProperty("user.dir");
+
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
 
@@ -28,7 +29,11 @@ public class Main {
                 System.out.println(currDirectory());
             } else if (command.equals("cd")) {
                 if (rest[0].equals("~")) {
-                    System.setProperty("user.dir", INITIAL_DIR);
+                    String home = System.getenv("HOME");
+                    if (home == null) {
+                        home = INITIAL_DIR; // fallback (rare)
+                    }
+                    System.setProperty("user.dir", new File(home).getAbsolutePath());
                     continue;
                 } else if (rest[0].charAt(0) == '/') {
                     // root directory or absolute path....
