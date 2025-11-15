@@ -23,7 +23,10 @@ public class Main {
                 System.out.println(result);
             } else if (command.equals("type")) {
                 System.out.println(type(result));
-            } else {
+            } else if(command.equals("pwd")){
+                System.out.println(System.getProperty("user.dir"));
+            } 
+            else {
                 boolean executed = false;
                 String pathEnv = System.getenv("PATH");
                 if(pathEnv == null || pathEnv.isEmpty()) {
