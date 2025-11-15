@@ -118,7 +118,7 @@ public class Main {
     }
 
     public static File currDirectory() {
-        return new File(System.getProperty("."));
+        return new File(System.getProperty("user.dir"));
     }
 
 }
