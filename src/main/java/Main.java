@@ -25,7 +25,17 @@ public class Main {
                 System.out.println(type(result));
             } else if(command.equals("pwd")){
                 System.out.println(System.getProperty("user.dir"));
-            } 
+            } else if(command.equals("cd")){
+                if(rest[0].charAt(0) == '/'){
+                    //root directory or absolute path....
+                    File newDirectory = new File(rest[0]);
+                    if(newDirectory.exists() && newDirectory.isDirectory()){
+                        System.setProperty("user.dir", newDirectory.getAbsolutePath());
+                    }else{
+                        System.out.println("cd: " + rest[0] + ": No such file or directory");
+                    }
+                }
+            }
             else {
                 boolean executed = false;
                 String pathEnv = System.getenv("PATH");
@@ -54,7 +64,7 @@ public class Main {
     }
 
     public static String type(String command) {
-        String[] builtins = { "exit", "echo", "type","pwd" };
+        String[] builtins = { "exit", "echo", "type","pwd","cd"};
         for (String b : builtins) {
             if (Objects.equals(b, command)) {
                 return command + " is a shell builtin";
