@@ -27,7 +27,7 @@ public class Main {
                 System.out.println(currDirectory());
             } else if (command.equals("cd")) {
                 if(rest[0].charAt(0) == '~'){
-                    File currDirectory = new File("user.home");
+                    File currDirectory = new File(System.getProperty("user.home"));
                     System.setProperty("user.dir", currDirectory.getAbsolutePath());
                 }
                 else if (rest[0].charAt(0) == '/') {
