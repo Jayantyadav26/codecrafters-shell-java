@@ -26,7 +26,11 @@ public class Main {
             } else if (command.equals("pwd")) {
                 System.out.println(currDirectory());
             } else if (command.equals("cd")) {
-                if (rest[0].charAt(0) == '/') {
+                if(rest[0].charAt(0) == '~'){
+                    File currDirectory = new File("user.home");
+                    System.setProperty("user.dir", currDirectory.getAbsolutePath());
+                }
+                else if (rest[0].charAt(0) == '/') {
                     // root directory or absolute path....
                     File newDirectory = new File(rest[0]);
                     if (newDirectory.exists() && newDirectory.isDirectory()) {
