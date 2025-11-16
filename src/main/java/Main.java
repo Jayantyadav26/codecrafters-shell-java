@@ -85,16 +85,25 @@ public class Main {
                     for (String dir : pathDirs) {
                         if (dir == null || dir.isEmpty())
                             continue;
+
                         File file = new File(dir.trim(), command);
                         if (file.exists() && file.canExecute()) {
                             Process process = Runtime.getRuntime().exec(words);
+
                             process.getInputStream().transferTo(System.out);
+                            process.waitFor(); // wait until fully done
+
                             executed = true;
+                            break;
                         }
                     }
                 }
-                if (!executed)
+                if (!executed) {
                     System.out.println(input + ": command not found");
+                } else {
+                    // IMPORTANT: print the prompt after command output
+                    System.out.flush();
+                }
             }
         }
 
