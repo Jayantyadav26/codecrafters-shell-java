@@ -14,7 +14,7 @@ public class Main {
                 continue;
 
             // *** NEW: proper tokenizer ***
-            String[] words = tokenize(input);
+            String[] words = Tokenize.tokenize(input);
 
             if (words.length == 0)
                 continue;
@@ -26,7 +26,7 @@ public class Main {
             } else if (Objects.equals(command, "echo")) {
                 System.out.println(result);
             } else if (command.equals("type")) {
-                System.out.println(type(result));
+                System.out.println(Type.type(result));
             } else if (command.equals("pwd")) {
                 System.out.println(currDirectory());
             } else if (command.equals("cd")) {
@@ -110,66 +110,11 @@ public class Main {
         scanner.close();
     }
 
-    public static String type(String command) {
-        String[] builtins = { "exit", "echo", "type", "pwd", "cd" };
-        for (String b : builtins) {
-            if (Objects.equals(b, command)) {
-                return command + " is a shell builtin";
-            }
-        }
-
-        String pathEnv = System.getenv("PATH");
-        if (pathEnv == null || pathEnv.isEmpty()) {
-            return command + ": not found";
-        }
-
-        String[] pathDirs = pathEnv.split(":");
-
-        for (String dir : pathDirs) {
-            if (dir == null || dir.isEmpty())
-                continue;
-            File file = new File(dir.trim(), command);
-            if (file.exists() && file.canExecute()) {
-                return command + " is " + file.getAbsolutePath();
-            }
-        }
-
-        return command + ": not found";
-    }
+   
 
     public static File currDirectory() {
         return new File(System.getProperty("user.dir"));
     }
 
-    public static String[] tokenize(String input) {
-        List<String> tokens = new ArrayList<>();
-        StringBuilder currentToken = new StringBuilder();
-
-        boolean inQuotes = false;
-
-        for (int i = 0; i < input.length(); i++) {
-            char c = input.charAt(i);
-
-            if (c == '\'') {
-                inQuotes = !inQuotes;
-                continue;
-            }
-
-            if (!inQuotes && Character.isWhitespace(c)) {
-                if (currentToken.length() > 0) {
-                    tokens.add(currentToken.toString());
-                    currentToken.setLength(0); // empty stringbuilder
-                }
-            } else {
-                currentToken.append(c);
-            }
-        }
-
-        if (currentToken.length() > 0) {
-            tokens.add(currentToken.toString());
-        }
-
-        return tokens.toArray(new String[0]);
-    }
-
+    
 }
