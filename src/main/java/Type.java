@@ -2,7 +2,7 @@ import java.io.File;
 import java.util.Objects;
 
 public class Type {
-    //
+    //dsad
      public static String type(String command) {
         String[] builtins = { "exit", "echo", "type", "pwd", "cd" };
         for (String b : builtins) {
