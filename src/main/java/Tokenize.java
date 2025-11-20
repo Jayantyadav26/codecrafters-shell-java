@@ -23,6 +23,7 @@ public class Tokenize {
             }
             if(c == '\\' && !inSingleQuotes && !indoubleQuotes) {
                 // isBackslash = true;
+                currentToken.append(" ");
                 continue;
             }
 
