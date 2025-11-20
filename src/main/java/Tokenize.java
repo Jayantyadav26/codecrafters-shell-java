@@ -12,16 +12,7 @@ public class Tokenize {
 
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-
-            if (c == '\'' && !indoubleQuotes) {
-                inSingleQuotes = !inSingleQuotes;
-                continue;
-            }
-            if(c == '"' && !inSingleQuotes) {
-                indoubleQuotes = !indoubleQuotes;
-                continue;
-            }
-             if (escapeNext) {
+            if (escapeNext) {
                 // add character as-is
                 currentToken.append(c);
                 escapeNext = false;
@@ -33,8 +24,15 @@ public class Tokenize {
                 escapeNext = true;
                 continue;
             }
-
-
+            if (c == '\'' && !indoubleQuotes) {
+                inSingleQuotes = !inSingleQuotes;
+                continue;
+            }
+            if(c == '"' && !inSingleQuotes) {
+                indoubleQuotes = !indoubleQuotes;
+                continue;
+            }
+             
             if (!inSingleQuotes && !indoubleQuotes && Character.isWhitespace(c)) {
                 if (currentToken.length() > 0) {
                     tokens.add(currentToken.toString());
