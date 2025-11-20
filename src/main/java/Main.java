@@ -8,11 +8,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-
-            // print prompt
             System.out.print("$ ");
-            System.out.flush();
-
             String input = scanner.nextLine();
             if (input.trim().isEmpty())
                 continue;
@@ -23,67 +19,51 @@ public class Main {
 
             String command = words[0];
             String[] rest = Arrays.copyOfRange(words, 1, words.length);
-            String joinedArgs = String.join(" ", rest);
+            String result = String.join(" ", rest);
 
-            if (command.equals("exit")) {
+            if (Objects.equals(command, "exit")) {
                 break;
-            }
 
-            else if (command.equals("echo")) {
-                System.out.println(joinedArgs);
+            } else if (Objects.equals(command, "echo")) {
+                System.out.println(result);
+
+            } else if (command.equals("type")) {
+                System.out.println(Type.type(result));
+
+            } else if (command.equals("pwd")) {
+                System.out.println(currDirectory());
+
+            } else if (command.equals("cd")) {
+                if (rest.length == 0) continue;
+
+                handleCd(rest[0]);
                 continue;
-            }
 
-            else if (command.equals("type")) {
-                System.out.println(Type.type(joinedArgs));
-                continue;
-            }
+            } else {
+                boolean executed = false;
+                String pathEnv = System.getenv("PATH");
 
-            else if (command.equals("pwd")) {
-                System.out.println(currDirectory().getAbsolutePath());
-                continue;
-            }
+                if (pathEnv != null && !pathEnv.isEmpty()) {
+                    String[] dirs = pathEnv.split(":");
 
-            else if (command.equals("cd")) {
-                handleCd(rest);
-                continue;
-            }
+                    for (String dir : dirs) {
+                        if (dir.isEmpty())
+                            continue;
+                        File file = new File(dir.trim(), command);
 
-            // --------------------------------------------
-            // HANDLE EXTERNAL COMMANDS (cat, ls, etc.)
-            // --------------------------------------------
-
-            boolean executed = false;
-            String pathEnv = System.getenv("PATH");
-
-            if (pathEnv != null && !pathEnv.isEmpty()) {
-                String[] pathDirs = pathEnv.split(":");
-
-                for (String dir : pathDirs) {
-                    if (dir == null || dir.isEmpty())
-                        continue;
-
-                    File file = new File(dir.trim(), command);
-
-                    if (file.exists() && file.canExecute()) {
-
-                        Process process = Runtime.getRuntime().exec(words);
-
-                        // print process output
-                        process.getInputStream().transferTo(System.out);
-                        process.getErrorStream().transferTo(System.err);
-
-                        process.waitFor();
-                        System.out.flush();
-
-                        executed = true;
-                        break;
+                        if (file.exists() && file.canExecute()) {
+                            Process proc = Runtime.getRuntime().exec(words);
+                            proc.getInputStream().transferTo(System.out);
+                            proc.waitFor();
+                            executed = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (!executed) {
-                System.out.println(input + ": command not found");
+                if (!executed)
+                    System.out.println(input + ": command not found");
+
                 System.out.flush();
             }
         }
@@ -91,39 +71,30 @@ public class Main {
         scanner.close();
     }
 
-    // ---------------------------
-    // CD Handling
-    // ---------------------------
-    public static void handleCd(String[] args) {
-        if (args.length == 0)
-            return;
-
-        String path = args[0];
-
-        if (path.equals("~")) {
-            String home = System.getenv("HOME");
-            if (home == null) home = INITIAL_DIR;
-            System.setProperty("user.dir", home);
-            return;
-        }
-
-        File newDir;
-
-        if (path.startsWith("/")) {
-            newDir = new File(path);
-        } else {
-            newDir = new File(currDirectory(), path);
-        }
-
+    public static void handleCd(String path) {
         try {
-            newDir = newDir.getCanonicalFile();
+            if (path.equals("~")) {
+                String home = System.getenv("HOME");
+                if (home == null) home = INITIAL_DIR;
+                System.setProperty("user.dir", new File(home).getAbsolutePath());
+                return;
+            }
+
+            File current = currDirectory();
+            File newDir;
+
+            if (path.startsWith("/")) {
+                newDir = new File(path);
+            } else {
+                newDir = new File(current, path).getCanonicalFile();
+            }
+
             if (newDir.exists() && newDir.isDirectory()) {
                 System.setProperty("user.dir", newDir.getAbsolutePath());
             } else {
                 System.out.println("cd: " + path + ": No such file or directory");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("cd: " + path + ": No such file or directory");
         }
     }
