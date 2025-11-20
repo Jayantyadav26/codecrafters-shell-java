@@ -8,6 +8,7 @@ public class Tokenize {
 
         boolean inSingleQuotes = false;
         boolean indoubleQuotes = false;
+        // boolean isBackslash = false;
 
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
@@ -18,6 +19,10 @@ public class Tokenize {
             }
             if(c == '"' && !inSingleQuotes) {
                 indoubleQuotes = !indoubleQuotes;
+                continue;
+            }
+            if(c == '\\' && !inSingleQuotes && !indoubleQuotes) {
+                // isBackslash = true;
                 continue;
             }
 
