@@ -7,47 +7,57 @@ public class Tokenize {
         StringBuilder currentToken = new StringBuilder();
 
         boolean inSingleQuotes = false;
-        boolean indoubleQuotes = false;
+        boolean inDoubleQuotes = false;
         boolean escapeNext = false;
 
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
+
+            // If the previous character was a backslash (outside single quotes),
+            // we treat this character literally.
             if (escapeNext) {
-                // add character as-is
                 currentToken.append(c);
                 escapeNext = false;
                 continue;
             }
 
-            // Set escape flag
+            // Backslash escape outside single quotes
             if (c == '\\' && !inSingleQuotes) {
+                // Enable escape for next character
                 escapeNext = true;
                 continue;
             }
-            if (c == '\'' && !indoubleQuotes) {
+
+            // Handle single quotes (only toggle when not in double quotes)
+            if (c == '\'' && !inDoubleQuotes) {
                 inSingleQuotes = !inSingleQuotes;
                 continue;
             }
-            if(c == '"' && !inSingleQuotes) {
-                indoubleQuotes = !indoubleQuotes;
+
+            // Handle double quotes (only toggle when not in single quotes)
+            if (c == '"' && !inSingleQuotes) {
+                inDoubleQuotes = !inDoubleQuotes;
                 continue;
             }
-             
-            if (!inSingleQuotes && !indoubleQuotes && Character.isWhitespace(c)) {
+
+            // Whitespace splits tokens ONLY when not in quotes
+            if (!inSingleQuotes && !inDoubleQuotes && Character.isWhitespace(c)) {
                 if (currentToken.length() > 0) {
                     tokens.add(currentToken.toString());
-                    currentToken.setLength(0); // empty stringbuilder
+                    currentToken.setLength(0);
                 }
-            } else {
-                currentToken.append(c);
+                continue;
             }
+
+            // Normal character
+            currentToken.append(c);
         }
 
+        // Final token
         if (currentToken.length() > 0) {
             tokens.add(currentToken.toString());
         }
 
         return tokens.toArray(new String[0]);
     }
-
 }
