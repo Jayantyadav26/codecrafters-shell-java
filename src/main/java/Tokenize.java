@@ -8,7 +8,7 @@ public class Tokenize {
 
         boolean inSingleQuotes = false;
         boolean indoubleQuotes = false;
-        // boolean isBackslash = false;
+        boolean escapeNext = false;
 
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
@@ -21,11 +21,19 @@ public class Tokenize {
                 indoubleQuotes = !indoubleQuotes;
                 continue;
             }
-            if(c == '\\' && !inSingleQuotes && !indoubleQuotes) {
-                // isBackslash = true;
-                currentToken.append(" ");
+             if (escapeNext) {
+                // add character as-is
+                currentToken.append(c);
+                escapeNext = false;
                 continue;
             }
+
+            // Set escape flag
+            if (c == '\\' && !inSingleQuotes) {
+                escapeNext = true;
+                continue;
+            }
+
 
             if (!inSingleQuotes && !indoubleQuotes && Character.isWhitespace(c)) {
                 if (currentToken.length() > 0) {
