@@ -169,6 +169,8 @@ public class Main {
                         // Double quotes: preserve backslash + next char literally
                         if(next =='"' || next=='\\' || next == '$' || next=='`'){
                             current.append(next);
+                        }else{
+                            current.append('\\').append(next);
                         }
                     } else {
                         // Outside quotes: escape next char (do NOT include the backslash)
