@@ -7,7 +7,6 @@ import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // TODO: Uncomment the code below to pass the first stage
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
                 System.out.print("$ ");
@@ -25,7 +24,7 @@ public class Main {
             }
 
         } catch (Exception e) {
-            // TODO: handle exception
+         
         }
     }
 
@@ -168,7 +167,9 @@ public class Main {
                         current.append('\\').append(next);
                     } else if (inDoubleQuote) {
                         // Double quotes: preserve backslash + next char literally
-                        current.append('\\').append(next);
+                        if(next =='"' || next=='\\' || next == '$' || next=='`'){
+                            current.append(next);
+                        }
                     } else {
                         // Outside quotes: escape next char (do NOT include the backslash)
                         current.append(next);
